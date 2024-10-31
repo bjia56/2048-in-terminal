@@ -13,8 +13,8 @@ NCURSES_LIB?=ncurses
 NCURSES_CFLAGS?=`pkg-config --cflags $(NCURSES_LIB)`
 NCURSES_LDLIBS?=`pkg-config --libs $(NCURSES_LIB)`
 
-CFLAGS?=-Wall -Wextra -pedantic -std=c11 -O2 -march=native -D_GNU_SOURCE $(NCURSES_CFLAGS)
-LDLIBS?=$(NCURSES_LDLIBS)
+CFLAGS?=-Wall -Wextra -pedantic -std=c11 -O2 -march=native -D_GNU_SOURCE
+LDFLAGS?=
 
 PREFIX?=/usr/local
 BINDIR?=$(PREFIX)/bin
@@ -25,13 +25,13 @@ BINDIR?=$(PREFIX)/bin
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) $^ -o $(TARGET) $(LDLIBS)
+	$(CC) $(CFLAGS) $(NCURSES_CFLAGS) $^ -o $(TARGET) $(LDFLAGS) $(NCURSES_LDLIBS)
 
 %.o : %.c
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(BUILDDIR)/%.d
 	$(CC) -MM $< -MQ $(BUILDDIR)/$*.o -MF $(BUILDDIR)/$*.d
-	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $(NCURSES_CFLAGS) $< -o $@
 
 %.d: ;
 

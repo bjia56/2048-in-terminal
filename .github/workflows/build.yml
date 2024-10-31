@@ -1,0 +1,58 @@
+name: Build 2048
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    name: Build 2048
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup cosmocc
+        uses: bjia56/setup-cosmocc@v0.0.3
+        with:
+          version: 3.9.4
+
+      - name: Install some packages
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          sudo apt update
+          sudo apt -y install wget pkg-config git ncurses-bin
+
+      - name: Make prefix dir
+        run: |
+          prefix=${{ github.workspace }}/cosmo
+          mkdir -p ${prefix}
+          mkdir -p ${prefix}/lib/.aarch64
+          echo "prefix=${prefix}" >> "$GITHUB_ENV"
+
+      - name: Set env vars
+        run: |
+          echo "AR=$(command -v cosmoar)" >> "$GITHUB_ENV"
+          echo "CC=cosmocc" >> "$GITHUB_ENV"
+          echo "CXX=cosmoc++" >> "$GITHUB_ENV"
+          echo "CFLAGS=-I${{ env.prefix }}/include" >> "$GITHUB_ENV"
+          echo "CPPFLAGS=-I${{ env.prefix }}/include" >> "$GITHUB_ENV"
+          echo "CXXFLAGS=${CPPFLAGS} -fexceptions" >> "$GITHUB_ENV"
+          echo "LDFLAGS=-L${{ env.prefix }}/lib" >> "$GITHUB_ENV"
+          echo "PKG_CONFIG_PATH=${{ env.prefix }}/lib/pkgconfig:${{ env.prefix }}/share/pkgconfig" >> "$GITHUB_ENV"
+
+      - name: Build ncurses
+        run: |
+          wget https://github.com/bjia56/build-dependencies/releases/download/portable-python/ncurses-6.4.tar.gz
+          tar xf ncurses-6.4.tar.gz
+          cd ncurses-6.4
+          ./configure --with-normal --without-progs --enable-overwrite --disable-stripping --prefix=${{ env.prefix }}
+          make -j4
+          make install
+          cp lib/.aarch64/lib*.a ${{ env.prefix }}/lib/.aarch64
+
+      - name: Build 2048
+        run: |
+          make EXE=2048

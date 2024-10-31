@@ -55,11 +55,12 @@ jobs:
 
       - name: Build 2048
         run: |
-          make EXE=2048
+          make
           make install PREFIX=${{ env.prefix }}
+          cp ${{ env.prefix }}/bin/2048-in-terminal 2048.com
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: 2048
-          path: ${{ env.prefix }}/bin/2048
+          path: 2048.com

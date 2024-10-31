@@ -48,7 +48,7 @@ jobs:
           wget https://github.com/bjia56/build-dependencies/releases/download/portable-python/ncurses-6.4.tar.gz
           tar xf ncurses-6.4.tar.gz
           cd ncurses-6.4
-          ./configure --with-normal --without-progs --enable-overwrite --disable-stripping --with-termlib --disable-database --prefix=${{ env.prefix }}
+          ./configure --with-normal --without-progs --enable-overwrite --disable-stripping --with-termlib --disable-database --with-fallbacks=xterm --prefix=${{ env.prefix }}
           make -j4
           make install
           cp lib/.aarch64/lib*.a ${{ env.prefix }}/lib/.aarch64

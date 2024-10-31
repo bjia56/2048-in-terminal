@@ -23,7 +23,7 @@ jobs:
         run: |
           export DEBIAN_FRONTEND=noninteractive
           sudo apt update
-          sudo apt -y install wget pkg-config git ncurses-bin
+          sudo apt -y install wget pkg-config git ncurses-bin ncurses-term
 
       - name: Make prefix dir
         run: |

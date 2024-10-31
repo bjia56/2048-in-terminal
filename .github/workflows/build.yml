@@ -56,3 +56,10 @@ jobs:
       - name: Build 2048
         run: |
           make EXE=2048
+          make install PREFIX=${{ env.prefix }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 2048
+          path: ${{ env.prefix }}/bin/2048
